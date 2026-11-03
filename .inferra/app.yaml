@@ -1,0 +1,17 @@
+version: 3
+name: chat
+type: web
+process: web
+port: 3000
+health:
+  path: /health
+build:
+  env:
+    BP_NODE_VERSION: "22.*"
+env:
+  OPENAI_BASE_URL: https://api.openai.com/v1
+  OPENAI_MODEL: gpt-4o-mini
+secrets:
+  - OPENAI_API_KEY
+services:
+  db: readwrite
