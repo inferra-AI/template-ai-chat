@@ -1,0 +1,4 @@
+version: 3
+# Only the default branch runs (v2: every app had branches: [main]).
+branches:
+  main: {}
