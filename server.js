@@ -3,7 +3,15 @@ import pg from 'pg';
 import { fileURLToPath } from 'node:url';
 
 const app = express();
-const pool = new pg.Pool({ connectionString: process.env.DB_URL, connectionTimeoutMillis: 5000 });
+const poolConfig = { connectionString: process.env.DB_URL, connectionTimeoutMillis: 5000 };
+if (poolConfig.connectionString && process.env.DB_CA) {
+  const url = new URL(poolConfig.connectionString);
+  // pg gives URL SSL options precedence over the explicit CA.
+  url.searchParams.delete('sslmode');
+  poolConfig.connectionString = url.toString();
+  poolConfig.ssl = { ca: process.env.DB_CA, rejectUnauthorized: true };
+}
+const pool = new pg.Pool(poolConfig);
 app.use(express.json({ limit: '32kb' }));
 app.use(express.static(fileURLToPath(new URL('./public', import.meta.url))));
 async function initialize() {
